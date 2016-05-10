@@ -1,5 +1,6 @@
 package webApps.controllers;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,7 +36,9 @@ public class OrderController {
     public SystemRepository systemRepository;
 
     private static String NAME = "fileTemp";
-    private static String fileInfo;
+    private static String fileInfo,editDataCorrecntess;
+
+
 
 
         /**
@@ -45,6 +48,10 @@ public class OrderController {
         private long findSystemIdByName(String name) {
             SystemDsc systemDsc = systemRepository.findByName(name);
             return systemDsc.getId();
+        }
+        //// TODO: 09.05.2016 add a method to check correctntess of fetched data (String, number etc.) end set editDataCorrectness
+        private boolean checkDataCorrectness(Order order) {
+            return true;
         }
 
         /**
@@ -96,6 +103,8 @@ public class OrderController {
                     for(Order order: listOfOrders) {
                         order.setSystem_id(findSystemIdByName(order.getSystem()));
                     }
+
+                    // TODO: 10.05.2016 add condition for checking the data consistency
                     orderRepository.save(listOfOrders);
                     fileInfo= "File " + uploadedFileName + " uploaded";
                 }
@@ -147,7 +156,7 @@ public class OrderController {
                                     @RequestParam("activeEdit") String active
                                     ){
 
-            //// TODO: 09.05.2016 check if every data in fields are correct (String, number etc.)
+
 
             Long idL=1L;
             try {
@@ -170,8 +179,9 @@ public class OrderController {
             order.setAuthorization_percent(authorization);
             order.setActive(active);
 
-        //  find corresponding system id and set in in system_contract table
+            //  find corresponding system id and set in in system_contract table
             order.setSystem_id(findSystemIdByName(order.getSystem()));
+            // TODO: 10.05.2016 add condition for checking the data consistency
             orderRepository.save(order);
 
             return new ModelAndView("redirect:/orders");
