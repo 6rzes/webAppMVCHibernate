@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>System data</title>
+    <link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.0/css/jquery.dataTables.css"/>
+    <link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.0/css/jquery.dataTables_themeroller.css"/>
+    <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.0/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+    <script src="css/styles.css" type="text/javascript"/>
+
+
+    <script type ="text/javascript" class="init">
+
+        <!--confirm file deletion dialog-->
+        $(function() {
+            $('.deleteConfirm').click(function() {
+                return window.confirm("Are you sure?");
+            });
+        });
+
+        //file open dialog
+        function myFunction() {
+            var x = document.getElementById("fileToOpen");
+            document.getElementById("fileLink").value = x.value;
+            x.disabled = true;
+        }
+
+        //cick detection and copy-paste data from tableView to tableEdit
+        $(document).ready(function() {
+            var table = $('#tableView').DataTable();
+
+            $('#tableView tbody').on('click', 'tr', function () {
+                var data = table.row( this ).data();
+                document.getElementById("idEdit").value = data[0];
+                document.getElementById("systemEdit").value = data[1];
+                document.getElementById("requestEdit").value = data[2];
+                document.getElementById("orderNumberEdit").value = data[3];
+                document.getElementById("fromDateEdit").value = data[4];
+                document.getElementById("toDateEdit").value = data[5];
+                document.getElementById("amountEdit").value = data[6];
+                document.getElementById("amountTypeEdit").value = data[7];
+                document.getElementById("amountPeriodEdit").value = data[8];
+                document.getElementById("authorizationEdit").value = data[9];
+                document.getElementById("activeEdit").value = data[10];
+            } );
+        } );
+
+    </script>
+
+</head>
+<body>
+<!--UPLOAD FILE-->
+<div>
+    <form method="POST" enctype="multipart/form-data" action="orders/uploadFile">
+        <table>
+            <tr><td>File to upload:</td><td><input type="file" name="file" /></td></tr>
+            <tr><td></td><td><input type="submit" value="Upload" /></td></tr>
+        </table>
+    </form>
+    FILE INFO: <td data-th-text="${fileInfo}"></td>
+</div>
+
+
+<br/><br/>
+<br/><br/>
+<!--data presentation table-->
+<table id="tableView" class="table table-striped table-hover dt-responsive" cellspacing="0" width="90%">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>System</th>
+        <th>Request</th>
+        <th>Order number</th>
+        <th>From date</th>
+        <th>To date</th>
+        <th>Amount</th>
+        <th>Amount type</th>
+        <th>Amount period</th>
+        <th>Authorization %</th>
+        <th>Active</th>
+        <th>DELETE</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr data-th-each="order : ${orders}">
+        <td class="id" data-th-text="${order.id}" style="width:2%"></td>
+        <td class="system" data-th-text="${order.system}" style="width:5%"></td>
+        <td class="request" data-th-text="${order.request}" style="width:5%"></td>
+        <td class="order_number" data-th-text="${order.order_number}" style="width:5%"></td>
+        <td class="from_date" data-th-text="${order.from_date}" style="width:5%"></td>
+        <td class="to_date" data-th-text="${order.to_date}" style="width:5%"></td>
+        <td class="amount" data-th-text="${order.amount}" style="width:5%"></td>
+        <td class="amount_type" data-th-text="${order.amount_type}" style="width:3%"></td>
+        <td class="amount_period" data-th-text="${order.amount_period}" style="width:5%"></td>
+        <td class="authorization_percent" data-th-text="${order.authorization_percent}" style="width:5%"></td>
+        <td class="active" data-th-text="${order.active}" style="width:5%"></td>
+
+        <td style="width:5%">
+            <a id="deleteButton" th:href="@{'/orders/{id}/delete'(id=${order.id})}" class="deleteConfirm">
+                DELETE
+                            <span class="fa-stack">
+                                <i class="glyphicon glyphicon-trash"></i>
+                            </span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<br/><br/><br/><br/>
+
+<form method="post" name="comment_form" id="comment_form" action="/orders/saveData" role="form">
+
+    <table id="tableEdit" class="display">
+        <tr>
+            <th>Id </th>
+            <th><input type="number" id="idEdit" name="idEdit" value=" " /></th>
+        </tr>
+        <tr>
+            <td>System</td>
+            <td><input type="text" id="systemEdit" name="systemEdit" value=" "/></td>
+        </tr>
+        <tr>
+            <td>Request</td>
+            <td><input type="text" id="requestEdit" name="requestEdit" value=" "/></td>
+        </tr>
+        <tr>
+            <td>Number</td>
+            <td><input type="text" id="orderNumberEdit" name="orderNumberEdit" value=" "/> </td>
+        </tr>
+        <tr>
+            <td>From date</td>
+            <td><input type="datetime" id="fromDateEdit" name="fromDateEdit" value=" "/></td>
+        </tr>
+        <tr>
+            <td>To Date</td>
+            <td><input type="datetime" id="toDateEdit" name="toDateEdit" value=" "/></td>
+        </tr>
+        <tr>
+            <td>Amount</td>
+            <td><input type="text" id="amountEdit" name="amountEdit" value=" "/></td>
+        </tr>
+        <tr>
+            <td>Amount type</td>
+            <td><input type="text" id="amountTypeEdit" name="amountTypeEdit" value=" " /></td>
+        </tr>
+        <tr>
+            <td>Amount period</td>
+            <td><input type="text" id="amountPeriodEdit" name="amountPeriodEdit" value=" "/></td>
+        </tr>
+        <tr>
+            <td>Authorization</td>
+            <td><input type="number" id="authorizationEdit" name="authorizationEdit" value=" "/></td>
+        </tr>
+        <tr>
+            <td>Active</td>
+            <td><input type="text" id="activeEdit" name="activeEdit" value=" "/></td>
+        </tr>
+    </table>
+    <button type="submit" id="submit" class="btn btn-primary">Submit</button>-->
+</form>
+
+
+</body>
+</html>
+
