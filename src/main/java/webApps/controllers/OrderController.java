@@ -36,8 +36,7 @@ public class OrderController {
     public SystemRepository systemRepository;
 
     private static String NAME = "fileTemp";
-    private static String fileInfo,editDataCorrecntess;
-
+    private static String fileInfo,editDataConsistency;
 
 
 
@@ -49,7 +48,7 @@ public class OrderController {
             SystemDsc systemDsc = systemRepository.findByName(name);
             return systemDsc.getId();
         }
-        //// TODO: 09.05.2016 add a method to check correctntess of fetched data (String, number etc.) end set editDataCorrectness
+        //// TODO: 09.05.2016 add a method to check consistency of fetched data (String, number etc.) end set editDataConsistency
         private boolean checkDataCorrectness(Order order) {
             return true;
         }
@@ -99,7 +98,7 @@ public class OrderController {
 
                     //retrieve list of Order objects
                     List<Order> listOfOrders = Order.retrieveListOfOrders(dataStringTable);
-                    //add coresponding systemID
+                    //add corresponding systemID
                     for(Order order: listOfOrders) {
                         order.setSystem_id(findSystemIdByName(order.getSystem()));
                     }
@@ -120,7 +119,7 @@ public class OrderController {
 
 
         /**
-         *  Initial page. Passes data from DB and provied file passing information
+         *  Initial page. Passes data from DB and provided file passing information
          */
         @RequestMapping(value = "", method = RequestMethod.GET)
         public String listOrders(Model model) {
@@ -179,7 +178,7 @@ public class OrderController {
             order.setAuthorization_percent(authorization);
             order.setActive(active);
 
-            //  find corresponding system id and set in in system_contract table
+            //  find corresponding system id and set in system_contract table
             order.setSystem_id(findSystemIdByName(order.getSystem()));
             // TODO: 10.05.2016 add condition for checking the data consistency
             orderRepository.save(order);
