@@ -1,5 +1,7 @@
-td
-{
-    height: 500px;
-    width:50px;
+.tweaked-margin {
+    margin-left: 400px; // or whatever you need
+}
+.tableEdit {
+    margin-left: 100px;
+
 }

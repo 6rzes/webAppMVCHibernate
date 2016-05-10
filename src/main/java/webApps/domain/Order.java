@@ -1,7 +1,6 @@
 package webApps.domain;
 
 import javax.persistence.*;
-import javax.validation.constraints.Null;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

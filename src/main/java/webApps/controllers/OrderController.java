@@ -16,7 +16,6 @@ import webApps.domain.OrderRepository;
 import webApps.domain.SystemDsc;
 import webApps.domain.SystemRepository;
 import webApps.excel.ExcelController;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -98,13 +97,14 @@ public class OrderController {
                         order.setSystem_id(findSystemIdByName(order.getSystem()));
                     }
                     orderRepository.save(listOfOrders);
+                    fileInfo= "File " + uploadedFileName + " uploaded";
                 }
                 catch (Exception e) {
-                    fileInfo = "You failed to upload " + NAME + " => " + e.getMessage();
+                    fileInfo = "You failed to upload " + uploadedFileName + " => " + e.getMessage();
                 }
             }
             else {
-                fileInfo= "You failed to upload " + NAME + " because the file was empty";
+                fileInfo= "You failed to upload " + uploadedFileName + " because the file was empty";
             }
                 return "redirect:/orders";
         }
