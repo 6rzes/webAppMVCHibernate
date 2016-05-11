@@ -55,42 +55,42 @@ public class OrderController {
             try {
                 Long.valueOf(iD);
             }catch(NumberFormatException e) {
-                result+=" iD |";
+                result+=" iD val:["+iD+"] |";
             }
 
             //checks fromDate fromat
             try {
                 Order.format.parse(fromDate);
             } catch (ParseException e) {
-                result+=" from_date |";
+                result+=" from_date val:["+fromDate+"] |";
             }
 
             //checks toDate format
             try {
                 Order.format.parse(toDate);
             } catch (ParseException e) {
-                result+=" to_date |";
+                result+=" to_date val:["+toDate+"] |";
             }
 
             //checks amount format
             try {
                 Float.valueOf(amount);
             } catch (NumberFormatException e) {
-                result+= "amount |";
+                result+= "amount val:["+amount+"] |";
             }
 
             //checks authorization percent
             try {
                 Float.valueOf(authPerc);
             } catch (NumberFormatException e) {
-                result+= "authorization % |";
+                result+= "authorization % val:["+authPerc+"] |";
             }
 
             //checks active format
             try {
                 Boolean.valueOf(active);
             } catch (NumberFormatException e) {
-                result+= "active |";
+                result+= "active val:["+active+"] |";
             }
 
             if (result.equals("")) {
@@ -99,6 +99,30 @@ public class OrderController {
             }
             editDataConsistency="Incorect values in: "+result;
             return false;
+        }
+        private boolean checkIfRightFormatExcelData(String data[][]){
+
+            //check if excell header is correct
+            if(!(data[0][0].equals("system")&&
+               data[0][1].equals("request") &&
+               data[0][2].equals("order_number") &&
+               data[0][3].equals("from_date")&&
+               data[0][4].equals("to_date") &&
+               data[0][5].equals("amount") &&
+               data[0][6].equals("amount_type") &&
+               data[0][7].equals("amount_period") &&
+               data[0][8].equals("authorization_percent") &&
+               data[0][9].equals("active"))) {
+                fileInfo="Wrong excel header";
+                return false;
+            }
+            //check if values are ok
+            for (int i = 1; i <data.length ; i++) {
+                //sets id=1, because excel file doesnt consist iD key
+                if(!checkIfRightFormat("1",data[i][3],data[i][4],data[i][5],data[i][8],data[i][9]))
+                    return false;
+                }
+                    return true;
         }
 
         /**
@@ -144,16 +168,17 @@ public class OrderController {
                         e.printStackTrace();
                     }
 
-                    //retrieve list of Order objects
-                    List<Order> listOfOrders = Order.retrieveListOfOrders(dataStringTable);
-                    //add corresponding systemID
-                    for(Order order: listOfOrders) {
-                        order.setSystem_id(findSystemIdByName(order.getSystem()));
+                    //save data if checked data ara valid
+                    if (checkIfRightFormatExcelData(dataStringTable)) {
+                        //retrieve list of Order objects
+                        List<Order> listOfOrders = Order.retrieveListOfOrders(dataStringTable);
+                        //add corresponding systemID
+                        for (Order order : listOfOrders) {
+                            order.setSystem_id(findSystemIdByName(order.getSystem()));
+                        }
+                        orderRepository.save(listOfOrders);
+                        fileInfo = "File " + uploadedFileName + " uploaded";
                     }
-
-                    // TODO: 10.05.2016 add condition for checking the data consistency
-                    orderRepository.save(listOfOrders);
-                    fileInfo= "File " + uploadedFileName + " uploaded";
                 }
                 catch (Exception e) {
                     fileInfo = "You failed to upload " + uploadedFileName + " => " + e.getMessage();
@@ -164,7 +189,6 @@ public class OrderController {
             }
                 return "redirect:/orders";
         }
-
 
         /**
          *  Initial page. Passes data from DB and provided file passing information
