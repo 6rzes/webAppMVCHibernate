@@ -1,6 +1,5 @@
 package webApps.controllers;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,12 +42,12 @@ public class OrderController {
          *  search for corresponding name in system datatable
          * @return long - system ID
          */
-        private long findSystemIdByName(String name) {
+        long findSystemIdByName(String name) {
             SystemDsc systemDsc = systemRepository.findByName(name);
             return systemDsc.getId();
         }
 
-        private boolean checkIfRightFormat(String iD, String fromDate, String toDate, String amount, String authPerc, String active) {
+        static boolean checkIfRightFormat(String iD, String fromDate, String toDate, String amount, String authPerc, String active) {
             String result= "";
 
             //checks iD format
@@ -64,12 +63,20 @@ public class OrderController {
             } catch (ParseException e) {
                 result+=" from_date val:["+fromDate+"] |";
             }
+            if(!fromDate.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                result+=" from_date  (wrong format) val:["+fromDate+"] |";
+//                throw new NumberFormatException("Wrong data format");
+            }
 
             //checks toDate format
             try {
                 Order.format.parse(toDate);
             } catch (ParseException e) {
                 result+=" to_date val:["+toDate+"] |";
+            }
+            if(!toDate.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                result+=" from_date (wrong format) val:["+fromDate+"] |";
+//                throw new NumberFormatException("Wrong data format");
             }
 
             //checks amount format
@@ -100,7 +107,7 @@ public class OrderController {
             editDataConsistency="Incorect values in: "+result;
             return false;
         }
-        private boolean checkIfRightFormatExcelData(String data[][]){
+        static boolean checkIfRightFormatExcelData(String data[][]){
 
             //check if excell header is correct
             if(!(data[0][0].equals("system")&&
