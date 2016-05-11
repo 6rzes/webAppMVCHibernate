@@ -195,7 +195,7 @@
                 <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#fileUpload">File Upload</button>
                 <div id="fileUpload" class="collapse in">
                     <form method="POST" enctype="multipart/form-data" action="orders/uploadFile">
-                        File to upload:<input type="file" name="file"/> <input type="submit" value="Upload"/>
+                        File to upload:<input type="file" name="file" accept=".xls,.xlsx"/> <input type="submit" value="Upload"/>
                     </form>
                     FILE INFO:
                     <td data-th-text="${fileInfo}"></td>
