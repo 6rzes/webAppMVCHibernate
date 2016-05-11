@@ -1,6 +1,6 @@
 package webApps.controllers;
 
-import com.sun.xml.internal.bind.v2.TODO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,8 +24,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
-
 
 @Controller
 @RequestMapping("/orders")
@@ -38,8 +39,6 @@ public class OrderController {
     private static String NAME = "fileTemp";
     private static String fileInfo,editDataConsistency;
 
-
-
         /**
          *  search for corresponding name in system datatable
          * @return long - system ID
@@ -48,9 +47,58 @@ public class OrderController {
             SystemDsc systemDsc = systemRepository.findByName(name);
             return systemDsc.getId();
         }
-        //// TODO: 09.05.2016 add a method to check consistency of fetched data (String, number etc.) end set editDataConsistency
-        private boolean checkDataCorrectness(Order order) {
-            return true;
+
+        private boolean checkIfRightFormat(String iD, String fromDate, String toDate, String amount, String authPerc, String active) {
+            String result= "";
+
+            //checks iD format
+            try {
+                Long.valueOf(iD);
+            }catch(NumberFormatException e) {
+                result+=" iD |";
+            }
+
+            //checks fromDate fromat
+            try {
+                Order.format.parse(fromDate);
+            } catch (ParseException e) {
+                result+=" from_date |";
+            }
+
+            //checks toDate format
+            try {
+                Order.format.parse(toDate);
+            } catch (ParseException e) {
+                result+=" to_date |";
+            }
+
+            //checks amount format
+            try {
+                Float.valueOf(amount);
+            } catch (NumberFormatException e) {
+                result+= "amount |";
+            }
+
+            //checks authorization percent
+            try {
+                Float.valueOf(authPerc);
+            } catch (NumberFormatException e) {
+                result+= "authorization % |";
+            }
+
+            //checks active format
+            try {
+                Boolean.valueOf(active);
+            } catch (NumberFormatException e) {
+                result+= "active |";
+            }
+
+            if (result.equals("")) {
+                editDataConsistency = "Values check OK";
+                return true;
+            }
+            editDataConsistency="Incorect values in: "+result;
+            return false;
         }
 
         /**
@@ -126,6 +174,8 @@ public class OrderController {
             model.addAttribute("orders", orderRepository.findAll());
             //pass file Info
             model.addAttribute("fileInfo",fileInfo);
+            //pass edit data consistency
+            model.addAttribute("editDataConsistency",editDataConsistency);
             return "orders/list";
         }
 
@@ -155,15 +205,10 @@ public class OrderController {
                                     @RequestParam("activeEdit") String active
                                     ){
 
+           //saves the data into DB if date are correct. Doesnt check String value types
+           if ( checkIfRightFormat(iD,fromDate,toDate,amount,authorization,active)) {
 
-
-            Long idL=1L;
-            try {
-                idL = Long.valueOf(iD);
-            }
-            catch(NumberFormatException e) {
-                fileInfo="Wrong format, id have to by a type Long number";
-            }
+            Long  idL = Long.valueOf(iD);
             Order order=new Order();
             if (orderRepository.exists(idL))
                 order = orderRepository.findOne(idL);
@@ -180,9 +225,8 @@ public class OrderController {
 
             //  find corresponding system id and set in system_contract table
             order.setSystem_id(findSystemIdByName(order.getSystem()));
-            // TODO: 10.05.2016 add condition for checking the data consistency
             orderRepository.save(order);
-
+           }
             return new ModelAndView("redirect:/orders");
         }
 }

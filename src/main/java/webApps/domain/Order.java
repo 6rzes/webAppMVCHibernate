@@ -18,7 +18,7 @@ public class Order {
     private Boolean active;
     private String amount_period, amount_type, order_number, request,system;
     private Date from_date, to_date;
-    private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    public static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
     public long getId() {
         return id;

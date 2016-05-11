@@ -128,13 +128,15 @@
             </tbody>
         </table>
     </div>
-
+    <div class="tweaked-margin">
+        <h4> <td data-th-text="${editDataConsistency}"></td> </h4>
+    </div>
     <div class="tweaked-margin">
         <div class="row">
         <!--EDIT DATA-->
             <div class="col-sm-6">
                 <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#edit">Edit Data</button>
-                <div id="edit" class="collapse">
+                <div id="edit" class="collapse in">
                     <div class="tableEdit">
                         <form method="post" name="comment_form" id="comment_form" action="/orders/saveData" role="form">
 
@@ -185,8 +187,8 @@
                                 </tr>
                             </table>
                             <button type="submit" id="submit" class="btn btn-primary">Submit</button>
-                            -->
                         </form>
+
                     </div>
                 </div>
             </div>
